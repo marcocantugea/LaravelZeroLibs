@@ -27,7 +27,7 @@ class TimeMesureHandler{
     /**
      * Inicia el contador de tiempo
      *
-     * @return void
+     * @return self
      */
     public function startMesure(){
         $this->starDate=date('Y-m-d H:m:s');

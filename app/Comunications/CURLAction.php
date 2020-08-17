@@ -4,19 +4,71 @@ namespace App\Comunications;
 
 use App\Cache\CacheManager;
 use App\Comunications\URLBuilder;
-use Illuminate\Cache\Events\CacheMissed;
 use Illuminate\Support\Facades\Storage;
 
 class CURLAction{
 
+    /**
+     * Clase para operaciones CURL
+     * @author Marco Cantu Ges <marco.cantu.g@gmail.com>
+     * @version 1.0.0
+     * 
+     */
+
+    /**
+     * Variable de respuesta de la operacion CURL
+     *
+     * @var string|mixed
+     */ 
     private $response=null;
+    /**
+     * Guarda opciones de CURL
+     *
+     * @var array
+     */
     private $options=array();
+    /**
+     * HEADERS de curl
+     *
+     * @var array
+     */
     private $CURLHeader=array();
+    /**
+     * Bandera de error http
+     *
+     * @var boolean
+     */
     private $HttpError=false;
+    /**
+     * Respuesta de http de error
+     *
+     * @var string|mixed
+     */
     private $ResponseError;
+    /**
+     * Bandera para cargar contenido como archivo
+     *
+     * @var boolean
+     */
     private $AttachFile=false;
+    /**
+     * Bandera para cargar contenido como archivo RAW
+     *
+     * @var boolean
+     */
     private $AttachFileAsRaw=false;
+    /**
+     * Bandera para cargar contenido como archivo
+     *
+     * @var boolean
+     */
     private $AttachFileAsTransfer=false;
+    /**
+     * Activa la banedera para cargar cache
+     *
+     * @var boolean
+     */
+    private $enableCache=false;
     /**
      * Propiedad para objeto de URLBuilder
      *
@@ -47,11 +99,14 @@ class CURLAction{
             return null;
         }
 
-        if($this->CacheManager->ExistChache() && !$this->CacheManager->expire()){
+        if ($this->enableCache) {
+            if ($this->CacheManager->ExistChache() && !$this->CacheManager->expire()) {
                 var_dump("loaded from cache");
-                $this->response= $this->CacheManager->getContent();
+                $this->response = $this->CacheManager->getContent();
                 return $this;
+            }
         }
+
 
         $curl = curl_init();
 
@@ -62,9 +117,11 @@ class CURLAction{
         curl_setopt_array($curl,$this->options);
 
         $this->response = curl_exec($curl);
-        //guarda respuesta en cache
-        $this->CacheManager->setContent($this->response)->saveCacheFile();
 
+        if ($this->enableCache) {
+            //guarda respuesta en cache
+            $this->CacheManager->setContent($this->response)->saveCacheFile();
+        }
         if(curl_error($curl)!=""){
             $this->HttpError=true;
             $this->ResponseError=curl_error($curl);
@@ -311,6 +368,37 @@ class CURLAction{
     {
         $this->URLBuilder = $URLBuilder;
 
+        return $this;
+    }
+
+    /**
+     * Get the value of enableCache
+     * @return bool
+     */ 
+    public function getEnableCache() : bool
+    {
+        return $this->enableCache;
+    }
+
+    /**
+     * Set the value of enableCache
+     *
+     * @return  self
+     */ 
+    public function setEnableCache(bool $enableCache)
+    {
+        $this->enableCache = $enableCache;
+
+        return $this;
+    }
+
+    /**
+     * Asigna la URL del constructor URL
+     *
+     * @return self
+     */
+    public function setURLFromBuilder(){
+        $this->setURL($this->URLBuilder->getURL());
         return $this;
     }
 }

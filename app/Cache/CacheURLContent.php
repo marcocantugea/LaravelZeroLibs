@@ -6,7 +6,7 @@ use DateInterval;
 use DateTime;
 use Exception;
 
-class CacheManager
+class CacheURLContent
 {
 
     private $cacheFilesPath;

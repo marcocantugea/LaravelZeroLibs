@@ -2,7 +2,7 @@
 
 namespace App\Commands;
 
-use App\Cache\CacheManager;
+use App\Cache\CacheURLContent;
 use App\Comunications\CURLAction;
 use App\Comunications\URLBuilder;
 use App\Handlers\TimeMesureHandler;
@@ -33,10 +33,10 @@ class TestLibs extends Command
     public function handle()
     {
         //Test Load Cache Manager
-        // $this->TestLoadCacheManagerFile();
+        // $this->TestLoadCacheURLContentFile();
 
         // //Test CURL cache manager
-        // $this->TestCreateCacheManager();
+        // $this->TestCreateCacheURLContent();
 
         // //Test URL builder with CURLAction
         // $this->TestCURLActionWithURLBuilder();
@@ -123,7 +123,7 @@ class TestLibs extends Command
         dd($CURLAction);
     }
 
-    protected function TestCreateCacheManager(){
+    protected function TestCreateCacheURLContent(){
         $URLConstructor = new URLBuilder("http://elektrapreprod.mysellercenter.com/sellercenter/api/v1");
         $URLConstructor->addDinamicValuesToURL("/oauth/token");
         $URLConstructor->addParameter("grant_type","password")->addParameter("username","e.mora@gme.mx")->addParameter("password","123456");
@@ -135,20 +135,20 @@ class TestLibs extends Command
         $CURLAction->send();
         
         
-        $CacheManager= new CacheManager($URLConstructor->getURL());
-        $CacheManager->setContent($CURLAction->getResponse())->saveCacheFile();
-        dd($CacheManager);
+        $CacheURLContent= new CacheURLContent($URLConstructor->getURL());
+        $CacheURLContent->setContent($CURLAction->getResponse())->saveCacheFile();
+        dd($CacheURLContent);
         
     }
 
-    protected function TestLoadCacheManagerFile(){
+    protected function TestLoadCacheURLContentFile(){
         $URLConstructor = new URLBuilder("http://elektrapreprod.mysellercenter.com/sellercenter/api/v1");
         $URLConstructor->addDinamicValuesToURL("/oauth/token");
         $URLConstructor->addParameter("grant_type","password")->addParameter("username","e.mora@gme.mx")->addParameter("password","123456");
-        $CacheManager= new CacheManager($URLConstructor->getURL());
-        var_dump($CacheManager);
-        $CacheManager->loadCacheFile();
-        dd($CacheManager->getContent());
+        $CacheURLContent= new CacheURLContent($URLConstructor->getURL());
+        var_dump($CacheURLContent);
+        $CacheURLContent->loadCacheFile();
+        dd($CacheURLContent->getContent());
 
     }
 }

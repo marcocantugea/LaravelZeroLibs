@@ -2,7 +2,7 @@
 
 namespace App\Comunications;
 
-use App\Cache\CacheManager;
+use App\Cache\CacheURLContent;
 use App\Comunications\URLBuilder;
 use Illuminate\Support\Facades\Storage;
 
@@ -79,9 +79,9 @@ class CURLAction{
     /**
      * Cache manager object
      *
-     * @var CacheManager
+     * @var CacheURLContent
      */
-    private $CacheManager=null;
+    private $CacheURLContent=null;
 
     public function __construct()
     {
@@ -100,9 +100,9 @@ class CURLAction{
         }
 
         if ($this->enableCache) {
-            if ($this->CacheManager->ExistChache() && !$this->CacheManager->expire()) {
+            if ($this->CacheURLContent->ExistChache() && !$this->CacheURLContent->expire()) {
                 var_dump("loaded from cache");
-                $this->response = $this->CacheManager->getContent();
+                $this->response = $this->CacheURLContent->getContent();
                 return $this;
             }
         }
@@ -120,7 +120,7 @@ class CURLAction{
 
         if ($this->enableCache) {
             //guarda respuesta en cache
-            $this->CacheManager->setContent($this->response)->saveCacheFile();
+            $this->CacheURLContent->setContent($this->response)->saveCacheFile();
         }
         if(curl_error($curl)!=""){
             $this->HttpError=true;
@@ -153,12 +153,12 @@ class CURLAction{
     public function setURL(string $URL){
 
         //Inicializa cache manager
-        if(is_null($this->CacheManager)){
-            $this->CacheManager= new CacheManager($URL);
+        if(is_null($this->CacheURLContent)){
+            $this->CacheURLContent= new CacheURLContent($URL);
         }
 
         //cargca cache si existe
-        $this->CacheManager->loadCacheFile();
+        $this->CacheURLContent->loadCacheFile();
 
         if(!is_null($URL)){
             $this->addOption(CURLOPT_URL,$URL);

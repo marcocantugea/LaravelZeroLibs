@@ -33,7 +33,7 @@ class TestLibs extends Command
     public function handle()
     {
         //Test Load Cache Manager
-        // $this->TestLoadCacheURLContentFile();
+         //$this->TestLoadCacheURLContentFile();
 
         // //Test CURL cache manager
         // $this->TestCreateCacheURLContent();
@@ -48,7 +48,7 @@ class TestLibs extends Command
         $this->TestCURLAction();
 
         //Prueba medicion de tiempo
-        $this->TestMesureLib();
+        //$this->TestMesureLib();
     }
 
     /**
@@ -88,6 +88,7 @@ class TestLibs extends Command
         $CURLAction->setURL("http://elektrapreprod.mysellercenter.com/sellercenter/api/v1/oauth/token?grant_type=password&username=e.mora@gme.mx&password=123456");
         $CURLAction->setPOSTOption();
         $CURLAction->addHEADERSOptions("Authorization: Basic c2VsbGVyY2VudGVyY2xpZW50aWQ6MTIzNDU2");
+        $CURLAction->setEnableCache(true);
         $CURLAction->send();
         $this->info($CURLAction->getResponse());
 
@@ -146,7 +147,6 @@ class TestLibs extends Command
         $URLConstructor->addDinamicValuesToURL("/oauth/token");
         $URLConstructor->addParameter("grant_type","password")->addParameter("username","e.mora@gme.mx")->addParameter("password","123456");
         $CacheURLContent= new CacheURLContent($URLConstructor->getURL());
-        var_dump($CacheURLContent);
         $CacheURLContent->loadCacheFile();
         dd($CacheURLContent->getContent());
 
